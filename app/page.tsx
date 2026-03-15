@@ -98,7 +98,7 @@ export default function App() {
                   onSubmit={handleRequestSubmit} 
                 />;
               case 'chat':
-                return <Chat tripId={selectedTrip?.id} onBack={() => setCurrentPage('main')} initialMessage={initialChatMessage} />;
+                return <Chat currentUser={user} tripId={selectedTrip?.id} onBack={() => setCurrentPage('main')} initialMessage={initialChatMessage} />;
               default:
                 return <HomeFeed currentUser={user} onTripClick={handleTripClick} onCreateTrip={() => setCurrentPage('create-trip')} />;
             }

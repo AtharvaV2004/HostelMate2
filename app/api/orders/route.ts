@@ -41,6 +41,16 @@ export async function POST(req: Request) {
   const { error: itemsError } = await supabaseAdmin.from('order_items').insert(orderItems)
   if (itemsError) return NextResponse.json({ error: itemsError.message }, { status: 500 })
 
+  // Send an automated message to the trip chat
+  const itemsSummary = items.map((i: any) => `${i.name} (x${i.quantity})`).join(', ')
+  const messageText = `🎁 New Request: ${itemsSummary}`
+  
+  await supabaseAdmin.from('messages').insert({
+    trip_id,
+    sender_id: userId,
+    text: messageText
+  })
+
   // Increment slots_used on the trip
   await supabaseAdmin.rpc('increment_slots', { trip_id })
 

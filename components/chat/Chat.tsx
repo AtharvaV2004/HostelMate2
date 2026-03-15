@@ -6,8 +6,8 @@ import { createClient } from '@/lib/supabase/client';
 
 const supabase = createClient();
 
-export default function Chat({ tripId, onBack, initialMessage }: { tripId: string, onBack: () => void, initialMessage?: string }) {
-  const [message, setMessage] = useState('');
+export default function Chat({ tripId, onBack, initialMessage, currentUser }: { tripId: string, onBack: () => void, initialMessage?: string, currentUser: any }) {
+  const [message, setMessage] = useState(initialMessage || '');
   const [messages, setMessages] = useState<Message[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -22,7 +22,7 @@ export default function Chat({ tripId, onBack, initialMessage }: { tripId: strin
         const data = await response.json();
         setMessages(data.map((m: any) => ({
           ...m,
-          sender: m.sender_id === 'me' ? 'me' : 'other', // This will need logic based on current user
+          sender: m.sender_id === currentUser.id ? 'me' : 'other',
           time: new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         })));
       }
@@ -40,7 +40,7 @@ export default function Chat({ tripId, onBack, initialMessage }: { tripId: strin
       }, (payload) => {
         setMessages(prev => [...prev, {
           ...payload.new as any,
-          sender: 'other', // Default to other, will be 'me' if sent by this user
+          sender: payload.new.sender_id === currentUser.id ? 'me' : 'other',
           time: new Date(payload.new.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         }]);
       })
