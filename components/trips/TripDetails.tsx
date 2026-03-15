@@ -2,10 +2,32 @@ import { motion } from 'motion/react';
 import Image from 'next/image';
 import { MapPin, Clock, Navigation, CheckCircle2 } from 'lucide-react';
 
-export default function TripDetails({ trip, currentUser, onClose, onJoin }: { trip: any, currentUser: any, onClose: () => void, onJoin: () => void }) {
+export default function TripDetails({ trip, currentUser, onClose, onJoin, onManage, onRefresh }: { 
+  trip: any, 
+  currentUser: any, 
+  onClose: () => void, 
+  onJoin: () => void,
+  onManage: () => void,
+  onRefresh?: () => void
+}) {
   if (!trip) return null;
 
   const isHost = currentUser?.id === trip.host_id;
+
+  const handleUpdateStatus = async (orderId: string, status: string) => {
+    try {
+      const response = await fetch(`/api/orders/${orderId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status })
+      });
+      if (response.ok) {
+        onRefresh?.();
+      }
+    } catch (error) {
+      console.error('Failed to update order status:', error);
+    }
+  };
 
   return (
     <>
@@ -151,12 +173,46 @@ export default function TripDetails({ trip, currentUser, onClose, onJoin }: { tr
                     <div className="text-xs text-text-muted">for {order.requester?.full_name}</div>
                   </div>
                 </div>
-                <div className="text-right">
+                <div className="text-right flex flex-col items-end gap-2">
                   <div className="font-bold text-sm">₹{order.total_price}</div>
                   {order.payment_status === 'confirmed' ? (
                     <span className="text-[10px] text-primary flex items-center justify-end gap-1"><CheckCircle2 size={10} /> UPI Verified</span>
+                  ) : (order.status === 'accepted' || order.status === 'pending') && isHost ? (
+                    <div className="flex flex-col gap-2">
+                      {order.status === 'pending' && (
+                        <div className="flex gap-2">
+                          <button 
+                            onClick={() => handleUpdateStatus(order.id, 'accepted')}
+                            className="px-2 py-1 rounded-md bg-emerald-500/20 text-emerald-500 text-[10px] font-bold border border-emerald-500/30 hover:bg-emerald-500/30 transition-colors"
+                          >
+                            Accept
+                          </button>
+                          <button 
+                            onClick={() => handleUpdateStatus(order.id, 'declined')}
+                            className="px-2 py-1 rounded-md bg-red-500/20 text-red-500 text-[10px] font-bold border border-red-500/30 hover:bg-red-500/30 transition-colors"
+                          >
+                            Decline
+                          </button>
+                        </div>
+                      )}
+                      {order.status === 'accepted' && (
+                        <button 
+                          onClick={() => handleUpdateStatus(order.id, 'delivered')}
+                          className="px-2 py-1 rounded-md bg-primary/20 text-primary text-[10px] font-bold border border-primary/30 hover:bg-primary/30 transition-colors"
+                        >
+                          Mark as Delivered
+                        </button>
+                      )}
+                    </div>
                   ) : (
-                    <span className="text-[10px] text-amber-500">{order.status}</span>
+                    <span className={`text-[10px] ${
+                      order.status === 'accepted' ? 'text-emerald-500' : 
+                      order.status === 'delivered' ? 'text-primary' :
+                      order.status === 'declined' ? 'text-red-500' : 
+                      'text-amber-500'
+                    }`}>
+                      {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                    </span>
                   )}
                 </div>
               </motion.div>
@@ -165,17 +221,16 @@ export default function TripDetails({ trip, currentUser, onClose, onJoin }: { tr
 
           {/* CTA */}
           <motion.button 
-            whileHover={!isHost ? { scale: 1.02 } : {}}
-            whileTap={!isHost ? { scale: 0.98 } : {}}
-            onClick={!isHost ? onJoin : undefined} 
-            disabled={isHost}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={isHost ? onManage : onJoin} 
             className={`w-full py-4 rounded-xl font-bold text-base ${
               isHost 
-                ? 'bg-bg-surface border border-glass-border text-text-muted cursor-not-allowed opacity-70' 
+                ? 'bg-bg-surface border border-glass-border text-white hover:border-primary/50 transition-all font-bold' 
                 : 'emerald-gradient text-white emerald-glow'
             }`}
           >
-            {isHost ? "You are the Host" : "Request Items"}
+            {isHost ? "Manage Trip & Chat" : "Request Items"}
           </motion.button>
         </div>
       </motion.div>

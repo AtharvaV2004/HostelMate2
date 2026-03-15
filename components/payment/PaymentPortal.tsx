@@ -1,13 +1,17 @@
 import { useState } from 'react';
 import { motion } from 'motion/react';
-import { ArrowLeft, Copy, UploadCloud, Wallet, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, Copy, UploadCloud, Wallet, CheckCircle2, Clock } from 'lucide-react';
+import QRCode from 'react-qr-code';
 
-export default function PaymentPortal({ onBack, hostName, upiId }: { 
+export default function PaymentPortal({ onBack, hostName, upiId, amount, orderStatus }: { 
   onBack: () => void,
   hostName: string,
-  upiId: string
+  upiId: string,
+  amount: number,
+  orderStatus: string
 }) {
   const [copied, setCopied] = useState(false);
+  const upiUrl = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(hostName)}&am=${amount}&cu=INR`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(upiId);
@@ -36,39 +40,56 @@ export default function PaymentPortal({ onBack, hostName, upiId }: {
           animate={{ scale: 1, opacity: 1 }}
           className="flex flex-col items-center mb-8 gap-3"
         >
-          <div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 text-amber-500 px-4 py-2 rounded-full text-sm font-medium">
-            <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping absolute" />
-            <span className="w-2 h-2 rounded-full bg-amber-500 relative" />
-            Awaiting Confirmation
+          <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium ${
+            orderStatus === 'delivered' ? 'bg-primary/10 border-primary/20 text-primary' :
+            orderStatus === 'accepted' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500' :
+            'bg-amber-500/10 border-amber-500/20 text-amber-500'
+          }`}>
+            {orderStatus === 'delivered' && <span className="w-2 h-2 rounded-full bg-primary animate-ping" />}
+            <span className={`w-2 h-2 rounded-full ${
+              orderStatus === 'delivered' ? 'bg-primary' :
+              orderStatus === 'accepted' ? 'bg-emerald-500' :
+              'bg-amber-500'
+            }`} />
+            {orderStatus.charAt(0).toUpperCase() + orderStatus.slice(1)}
           </div>
           <p className="text-xs text-text-muted">Paying to <span className="text-white font-bold">{hostName}</span></p>
         </motion.div>
 
         {/* QR Code Card */}
-        <div className="flex flex-col items-center mb-8">
-          <motion.div 
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.1 }}
-            className="bg-white p-4 rounded-2xl emerald-glow mb-4 relative"
-          >
-            {/* Placeholder for actual QR */}
-            <div className="w-48 h-48 bg-gray-100 rounded-xl flex items-center justify-center border-2 border-dashed border-gray-300">
-              <div className="grid grid-cols-2 gap-1 w-24 h-24 opacity-20">
-                <div className="bg-black rounded-sm"></div>
-                <div className="bg-black rounded-sm"></div>
-                <div className="bg-black rounded-sm"></div>
-                <div className="bg-black rounded-sm"></div>
-              </div>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="bg-white p-2 rounded-lg shadow-sm">
-                  <span className="font-bold text-black text-xs">₹56.00</span>
+        {orderStatus === 'pending' ? (
+          <div className="flex flex-col items-center py-10 glass-card mx-6">
+            <Clock className="text-amber-500 mb-2" size={32} />
+            <p className="text-sm font-medium">Awaiting Host Approval</p>
+            <p className="text-xs text-text-muted text-center px-4 mt-2">
+              Once the host accepts your request, you'll be able to pay from here.
+            </p>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center mb-8">
+            <motion.div 
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.1 }}
+              className="bg-white p-4 rounded-2xl emerald-glow mb-4 relative"
+            >
+              <div className="w-48 h-48 bg-white rounded-xl flex items-center justify-center p-2">
+                <QRCode 
+                  value={upiUrl}
+                  size={180}
+                  style={{ height: "auto", maxWidth: "100%", width: "100%" }}
+                  viewBox={`0 0 256 256`}
+                />
+                <div className="absolute inset-x-0 -bottom-2 flex justify-center">
+                  <div className="bg-white px-3 py-1 rounded-full shadow-lg border border-glass-border">
+                    <span className="font-bold text-black text-xs">₹{amount.toFixed(2)}</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          </motion.div>
-          <button className="text-sm font-medium text-primary hover:underline">Save QR to Gallery</button>
-        </div>
+            </motion.div>
+            <button className="text-sm font-medium text-primary hover:underline">Save QR to Gallery</button>
+          </div>
+        )}
 
         {/* UPI ID Row */}
         <motion.div 

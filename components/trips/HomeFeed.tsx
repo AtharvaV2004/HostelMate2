@@ -4,19 +4,15 @@ import Image from 'next/image';
 import { Bell, Search, Plus, MapPin, Clock, ChevronRight, ShoppingBag } from 'lucide-react';
 import { Trip } from '@/types';
 
-export default function HomeFeed({ currentUser, onTripClick, onCreateTrip }: { currentUser: any, onTripClick: (trip: any) => void, onCreateTrip: () => void }) {
-  const [activeTrips, setActiveTrips] = useState<any[]>([]);
+export default function HomeFeed({ trips, currentUser, onTripClick, onCreateTrip }: { 
+  trips: any[], 
+  currentUser: any, 
+  onTripClick: (trip: any) => void, 
+  onCreateTrip: () => void 
+}) {
+  const activeTrips = trips; // Use trips from props
 
-  useEffect(() => {
-    const fetchTrips = async () => {
-      const response = await fetch('/api/trips');
-      if (response.ok) {
-        const data = await response.json();
-        setActiveTrips(data);
-      }
-    };
-    fetchTrips();
-  }, []);
+  // Internal fetch removed as now managed by parent App component
 
   const containerVariants = {
     hidden: { opacity: 0 },

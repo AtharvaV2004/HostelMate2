@@ -5,26 +5,14 @@ import { motion } from 'motion/react';
 import Image from 'next/image';
 import { Search, MapPin, Clock, Users, Filter, ShoppingBag, Star, Loader2 } from 'lucide-react';
 
-export default function TripsList({ currentUser, onTripClick }: { currentUser: any, onTripClick: (trip: any) => void }) {
-  const [trips, setTrips] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+export default function TripsList({ trips, currentUser, onTripClick }: { 
+  trips: any[], 
+  currentUser: any, 
+  onTripClick: (trip: any) => void 
+}) {
+  const loading = false; // Now managed by parent App component
 
-  useEffect(() => {
-    const fetchTrips = async () => {
-      try {
-        const response = await fetch('/api/trips');
-        if (response.ok) {
-          const data = await response.json();
-          setTrips(data);
-        }
-      } catch (error) {
-        console.error('Error fetching trips:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchTrips();
-  }, []);
+  // Internal fetch removed as now managed by parent App component
 
   const containerVariants = {
     hidden: { opacity: 0 },

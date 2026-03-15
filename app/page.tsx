@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import HomeFeed from '@/components/trips/HomeFeed';
 import TripsList from '@/components/trips/TripsList';
@@ -24,6 +24,24 @@ export default function App() {
   const [showTripDetails, setShowTripDetails] = useState(false);
   const [selectedTrip, setSelectedTrip] = useState<any>(null);
   const [initialChatMessage, setInitialChatMessage] = useState<string | undefined>(undefined);
+  const [trips, setTrips] = useState<any[]>([]);
+
+  const fetchTrips = async () => {
+    const response = await fetch('/api/trips');
+    if (response.ok) {
+      const data = await response.json();
+      setTrips(data);
+      // Update selected trip if it's open
+      if (selectedTrip) {
+        const updated = data.find((t: any) => t.id === selectedTrip.id);
+        if (updated) setSelectedTrip(updated);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (user) fetchTrips();
+  }, [user]);
 
   const supabase = createClient();
 
@@ -75,19 +93,22 @@ export default function App() {
               case 'main':
                 switch (activeTab) {
                   case 'home':
-                    return <HomeFeed currentUser={user} onTripClick={handleTripClick} onCreateTrip={() => setCurrentPage('create-trip')} />;
+                    return <HomeFeed trips={trips} currentUser={user} onTripClick={handleTripClick} onCreateTrip={() => setCurrentPage('create-trip')} />;
                   case 'trips':
-                    return <TripsList currentUser={user} onTripClick={handleTripClick} />;
+                    return <TripsList trips={trips} currentUser={user} onTripClick={handleTripClick} />;
                   case 'orders':
+                    const userOrder = selectedTrip?.orders?.find((o: any) => o.requester_id === user.id);
                     return <PaymentPortal 
                       hostName={selectedTrip?.host?.full_name || selectedTrip?.user || 'Host'} 
                       upiId={selectedTrip?.host?.upi_id || selectedTrip?.upiId || ''} 
+                      amount={userOrder?.total_price || 0}
+                      orderStatus={userOrder?.status || 'pending'}
                       onBack={() => setActiveTab('home')} 
                     />;
                   case 'profile':
                     return <Profile onBack={() => setActiveTab('home')} />;
                   default:
-                    return <HomeFeed currentUser={user} onTripClick={handleTripClick} onCreateTrip={() => setCurrentPage('create-trip')} />;
+                    return <HomeFeed trips={trips} currentUser={user} onTripClick={handleTripClick} onCreateTrip={() => setCurrentPage('create-trip')} />;
                 }
               case 'create-trip':
                 return <CreateTrip onBack={() => setCurrentPage('main')} onLive={() => setCurrentPage('main')} />;
@@ -100,7 +121,7 @@ export default function App() {
               case 'chat':
                 return <Chat currentUser={user} tripId={selectedTrip?.id} onBack={() => setCurrentPage('main')} initialMessage={initialChatMessage} />;
               default:
-                return <HomeFeed currentUser={user} onTripClick={handleTripClick} onCreateTrip={() => setCurrentPage('create-trip')} />;
+                return <HomeFeed trips={trips} currentUser={user} onTripClick={handleTripClick} onCreateTrip={() => setCurrentPage('create-trip')} />;
             }
           })()}
         </motion.div>
@@ -148,7 +169,13 @@ export default function App() {
               onJoin={() => {
                 setShowTripDetails(false);
                 setCurrentPage('request-item');
-              }} 
+              }}
+              onManage={() => {
+                setShowTripDetails(false);
+                setInitialChatMessage(undefined);
+                setCurrentPage('chat');
+              }}
+              onRefresh={fetchTrips}
             />
           )}
         </AnimatePresence>
