@@ -43,11 +43,21 @@ export default function TripDetails({ trip, currentUser, onClose, onJoin }: { tr
               initial={{ x: 20, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ delay: 0.2 }}
-              className="text-right"
+              className="text-right flex flex-col items-end gap-2"
             >
-              <span className="inline-flex items-center gap-1 bg-primary/10 text-primary px-3 py-1.5 rounded-full border border-primary/20 text-xs font-bold">
-                <Clock size={12} /> {new Date(trip.departure_time || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              <span className="inline-flex items-center gap-1 bg-primary/10 text-primary px-3 py-1.5 rounded-full border border-primary/20 text-[10px] font-bold">
+                Departure: {new Date(trip.departure_time || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </span>
+              {trip.returning_time && (
+                <span className="inline-flex items-center gap-1 bg-emerald-400/10 text-emerald-400 px-3 py-1.5 rounded-full border border-emerald-400/20 text-[10px] font-bold">
+                  Returning: {new Date(trip.returning_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </span>
+              )}
+              {trip.request_deadline && (
+                <span className="inline-flex items-center gap-1 bg-amber-400/10 text-amber-400 px-3 py-1.5 rounded-full border border-amber-400/20 text-[10px] font-bold">
+                  Deadline: {new Date(trip.request_deadline).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </span>
+              )}
             </motion.div>
           </div>
 

@@ -7,6 +7,8 @@ export default function CreateTrip({ onBack, onLive }: { onBack: () => void, onL
     store: '',
     location: '',
     departure_time: '',
+    returning_time: '',
+    request_deadline: '',
     slots_total: '5',
     notes: '',
     type: 'Quick'
@@ -24,7 +26,9 @@ export default function CreateTrip({ onBack, onLive }: { onBack: () => void, onL
         body: JSON.stringify({
           ...formData,
           slots_total: parseInt(formData.slots_total),
-          departure_time: new Date(formData.departure_time).toISOString()
+          departure_time: new Date(formData.departure_time).toISOString(),
+          returning_time: formData.returning_time ? new Date(formData.returning_time).toISOString() : null,
+          request_deadline: formData.request_deadline ? new Date(formData.request_deadline).toISOString() : null
         }),
       });
 
@@ -135,20 +139,49 @@ export default function CreateTrip({ onBack, onLive }: { onBack: () => void, onL
               </div>
             </div>
             <div className="space-y-2">
-              <label className="text-xs font-bold text-text-muted uppercase tracking-widest px-1">Slots Available</label>
+              <label className="text-xs font-bold text-text-muted uppercase tracking-widest px-1">Returning</label>
               <div className="glass-card flex items-center px-4 py-4 gap-3 focus-within:border-primary transition-colors">
-                <Users size={16} className="text-primary/50" />
-                <select 
-                  className="bg-transparent border-none outline-none w-full text-white text-sm"
-                  value={formData.slots_total}
-                  onChange={(e) => setFormData({...formData, slots_total: e.target.value})}
-                >
-                  <option value="3" className="bg-[#0F1412]">3 slots</option>
-                  <option value="5" className="bg-[#0F1412]">5 slots</option>
-                  <option value="8" className="bg-[#0F1412]">8 slots</option>
-                  <option value="10" className="bg-[#0F1412]">10 slots</option>
-                </select>
+                <Clock size={16} className="text-emerald-400/50" />
+                <input 
+                  type="datetime-local" 
+                  required
+                  className="bg-transparent border-none outline-none w-full text-white text-xs [color-scheme:dark]"
+                  value={formData.returning_time}
+                  onChange={(e) => setFormData({...formData, returning_time: e.target.value})}
+                />
               </div>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-xs font-bold text-text-muted uppercase tracking-widest px-1">Requests Cutoff (Deadline)</label>
+            <div className="glass-card flex items-center px-4 py-4 gap-3 focus-within:border-primary transition-colors">
+              <Clock size={16} className="text-amber-400/50" />
+              <input 
+                type="datetime-local" 
+                required
+                className="bg-transparent border-none outline-none w-full text-white text-xs [color-scheme:dark]"
+                value={formData.request_deadline}
+                onChange={(e) => setFormData({...formData, request_deadline: e.target.value})}
+              />
+            </div>
+            <p className="text-[10px] text-text-muted px-1 italic">No new requests will be accepted after this time.</p>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-xs font-bold text-text-muted uppercase tracking-widest px-1">Slots Available</label>
+            <div className="glass-card flex items-center px-4 py-4 gap-3 focus-within:border-primary transition-colors">
+              <Users size={16} className="text-primary/50" />
+              <select 
+                className="bg-transparent border-none outline-none w-full text-white text-sm"
+                value={formData.slots_total}
+                onChange={(e) => setFormData({...formData, slots_total: e.target.value})}
+              >
+                <option value="3" className="bg-[#0F1412]">3 slots</option>
+                <option value="5" className="bg-[#0F1412]">5 slots</option>
+                <option value="8" className="bg-[#0F1412]">8 slots</option>
+                <option value="10" className="bg-[#0F1412]">10 slots</option>
+              </select>
             </div>
           </div>
 

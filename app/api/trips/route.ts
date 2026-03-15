@@ -47,13 +47,15 @@ export async function POST(req: Request) {
   }
 
   const body = await req.json()
-  const { store, location, departure_time, slots_total, notes, type } = body
+  const { store, location, departure_time, returning_time, request_deadline, slots_total, notes, type } = body
 
   const { data, error } = await supabaseAdmin.from('trips').insert({
     host_id: userId,
     store,
     location,
     departure_time,
+    returning_time,
+    request_deadline,
     slots_total,
     notes,
     type: type || 'Quick',

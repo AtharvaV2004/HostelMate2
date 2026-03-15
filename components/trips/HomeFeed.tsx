@@ -126,9 +126,21 @@ export default function HomeFeed({ currentUser, onTripClick, onCreateTrip }: { c
                       <p className="text-xs text-text-muted flex items-center gap-1"><MapPin size={10} /> {trip.location}</p>
                     </div>
                   </div>
-                  <span className="text-xs font-medium bg-primary/10 text-primary px-2 py-1 rounded-full border border-primary/20 flex items-center gap-1">
-                    <Clock size={10} /> {new Date(trip.departure_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </span>
+                  <div className="flex flex-col items-end gap-1">
+                    <span className="text-[10px] font-bold text-primary flex items-center gap-1 bg-primary/10 px-2 py-0.5 rounded-full border border-primary/20">
+                      <Clock size={10} /> {new Date(trip.departure_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                    {trip.returning_time && (
+                      <span className="text-[10px] font-bold text-emerald-400 flex items-center gap-1 bg-emerald-400/10 px-2 py-0.5 rounded-full border border-emerald-400/20">
+                        <Clock size={10} /> {new Date(trip.returning_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    )}
+                    {trip.request_deadline && (
+                      <span className="text-[9px] text-amber-400 font-bold opacity-80">
+                        Until {new Date(trip.request_deadline).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    )}
+                  </div>
                 </div>
                 
                 <div className="mb-3">
