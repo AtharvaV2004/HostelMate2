@@ -2,8 +2,10 @@ import { motion } from 'motion/react';
 import Image from 'next/image';
 import { MapPin, Clock, Navigation, CheckCircle2 } from 'lucide-react';
 
-export default function TripDetails({ trip, onClose, onJoin }: { trip: any, onClose: () => void, onJoin: () => void }) {
+export default function TripDetails({ trip, currentUser, onClose, onJoin }: { trip: any, currentUser: any, onClose: () => void, onJoin: () => void }) {
   if (!trip) return null;
+
+  const isHost = currentUser?.id === trip.host_id;
 
   return (
     <>
@@ -153,12 +155,17 @@ export default function TripDetails({ trip, onClose, onJoin }: { trip: any, onCl
 
           {/* CTA */}
           <motion.button 
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={onJoin} 
-            className="w-full emerald-gradient py-4 rounded-xl font-bold text-base emerald-glow"
+            whileHover={!isHost ? { scale: 1.02 } : {}}
+            whileTap={!isHost ? { scale: 0.98 } : {}}
+            onClick={!isHost ? onJoin : undefined} 
+            disabled={isHost}
+            className={`w-full py-4 rounded-xl font-bold text-base ${
+              isHost 
+                ? 'bg-bg-surface border border-glass-border text-text-muted cursor-not-allowed opacity-70' 
+                : 'emerald-gradient text-white emerald-glow'
+            }`}
           >
-            Request Items
+            {isHost ? "You are the Host" : "Request Items"}
           </motion.button>
         </div>
       </motion.div>

@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { Bell, Search, Plus, MapPin, Clock, ChevronRight, ShoppingBag } from 'lucide-react';
 import { Trip } from '@/types';
 
-export default function HomeFeed({ onTripClick, onCreateTrip }: { onTripClick: (trip: any) => void, onCreateTrip: () => void }) {
+export default function HomeFeed({ currentUser, onTripClick, onCreateTrip }: { currentUser: any, onTripClick: (trip: any) => void, onCreateTrip: () => void }) {
   const [activeTrips, setActiveTrips] = useState<any[]>([]);
 
   useEffect(() => {
@@ -159,7 +159,9 @@ export default function HomeFeed({ onTripClick, onCreateTrip }: { onTripClick: (
                     </div>
                     <span className="text-xs text-text-muted">{trip.host?.full_name}</span>
                   </div>
-                  <button className="text-xs font-bold text-primary">Request</button>
+                  <button className="text-xs font-bold text-primary">
+                    {currentUser?.id === trip.host_id ? 'My Trip' : 'Request'}
+                  </button>
                 </div>
               </motion.div>
             ))}

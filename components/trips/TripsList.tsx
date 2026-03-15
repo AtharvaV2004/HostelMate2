@@ -5,7 +5,7 @@ import { motion } from 'motion/react';
 import Image from 'next/image';
 import { Search, MapPin, Clock, Users, Filter, ShoppingBag, Star, Loader2 } from 'lucide-react';
 
-export default function TripsList({ onTripClick }: { onTripClick: (trip: any) => void }) {
+export default function TripsList({ currentUser, onTripClick }: { currentUser: any, onTripClick: (trip: any) => void }) {
   const [trips, setTrips] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -113,6 +113,10 @@ export default function TripsList({ onTripClick }: { onTripClick: (trip: any) =>
               >
                 {(trip.slots_total - (trip.slots_used || 0)) <= 0 && (
                   <div className="absolute top-4 right-4 bg-red-500/10 text-red-500 px-2 py-1 rounded text-[10px] font-bold uppercase">Full</div>
+                )}
+                
+                {currentUser?.id === trip.host_id && (
+                  <div className="absolute top-4 right-4 bg-primary/10 text-primary px-2 py-1 rounded text-[10px] font-bold uppercase z-10">My Trip</div>
                 )}
                 
                 <div className="flex justify-between items-start mb-4">

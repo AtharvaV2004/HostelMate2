@@ -75,9 +75,9 @@ export default function App() {
               case 'main':
                 switch (activeTab) {
                   case 'home':
-                    return <HomeFeed onTripClick={handleTripClick} onCreateTrip={() => setCurrentPage('create-trip')} />;
+                    return <HomeFeed currentUser={user} onTripClick={handleTripClick} onCreateTrip={() => setCurrentPage('create-trip')} />;
                   case 'trips':
-                    return <TripsList onTripClick={handleTripClick} />;
+                    return <TripsList currentUser={user} onTripClick={handleTripClick} />;
                   case 'orders':
                     return <PaymentPortal 
                       hostName={selectedTrip?.host?.full_name || selectedTrip?.user || 'Host'} 
@@ -87,7 +87,7 @@ export default function App() {
                   case 'profile':
                     return <Profile onBack={() => setActiveTab('home')} />;
                   default:
-                    return <HomeFeed onTripClick={handleTripClick} onCreateTrip={() => setCurrentPage('create-trip')} />;
+                    return <HomeFeed currentUser={user} onTripClick={handleTripClick} onCreateTrip={() => setCurrentPage('create-trip')} />;
                 }
               case 'create-trip':
                 return <CreateTrip onBack={() => setCurrentPage('main')} onLive={() => setCurrentPage('main')} />;
@@ -100,7 +100,7 @@ export default function App() {
               case 'chat':
                 return <Chat tripId={selectedTrip?.id} onBack={() => setCurrentPage('main')} initialMessage={initialChatMessage} />;
               default:
-                return <HomeFeed onTripClick={handleTripClick} onCreateTrip={() => setCurrentPage('create-trip')} />;
+                return <HomeFeed currentUser={user} onTripClick={handleTripClick} onCreateTrip={() => setCurrentPage('create-trip')} />;
             }
           })()}
         </motion.div>
@@ -143,6 +143,7 @@ export default function App() {
           {showTripDetails && (
             <TripDetails 
               trip={selectedTrip}
+              currentUser={user}
               onClose={() => setShowTripDetails(false)} 
               onJoin={() => {
                 setShowTripDetails(false);
