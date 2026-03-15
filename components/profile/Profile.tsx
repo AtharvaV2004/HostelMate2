@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import Image from 'next/image';
 import { ArrowLeft, Settings, Award, Package, Heart, ChevronRight, Star, TrendingUp } from 'lucide-react';
-import { useUser } from '@clerk/nextjs';
+import { useSupabaseAuth } from '@/hooks/use-supabase-auth';
 
 export default function Profile({ onBack }: { onBack: () => void }) {
-  const { user } = useUser();
+  const { user } = useSupabaseAuth();
   const [profileData, setProfileData] = useState<any>(null);
   const [leaderboard, setLeaderboard] = useState<any[]>([]);
 
@@ -31,7 +31,7 @@ export default function Profile({ onBack }: { onBack: () => void }) {
   const stats = [
     { label: 'Orders', value: '0', icon: Package, color: 'text-blue-400' },
     { label: 'Hero Points', value: profileData?.hero_points || '0', icon: Heart, color: 'text-rose-400' },
-    { label: 'Rating', value: '5.0', icon: Star, color: 'text-amber-400' }
+    { label: 'Rating', value: profileData?.rating || '5.0', icon: Star, color: 'text-amber-400' }
   ];
 
   return (
@@ -59,15 +59,12 @@ export default function Profile({ onBack }: { onBack: () => void }) {
         >
           <div className="relative">
             <div className="w-24 h-24 rounded-full border-4 border-black bg-bg-surface overflow-hidden shadow-2xl relative">
-              {user?.imageUrl && (
-                <Image 
-                  src={user.imageUrl} 
-                  alt="Profile" 
-                  fill
-                  className="object-cover"
-                  referrerPolicy="no-referrer"
-                />
-              )}
+              <Image 
+                src={user?.user_metadata?.avatar_url || `https://picsum.photos/seed/${user?.id}/100/100`} 
+                alt="Profile" 
+                fill
+                className="object-cover"
+              />
             </div>
             <motion.div 
               animate={{ scale: [1, 1.2, 1] }}
@@ -78,8 +75,8 @@ export default function Profile({ onBack }: { onBack: () => void }) {
             </motion.div>
           </div>
           
-          <h2 className="text-2xl font-bold mt-4">{user?.fullName || "Syncing..."}</h2>
-          <p className="text-text-muted text-sm">{profileData?.hostel || "Hostel"} • Room {profileData?.room_no || "---"}</p>
+          <h2 className="text-2xl font-bold mt-4">{user?.user_metadata?.full_name || "Syncing..."}</h2>
+          <p className="text-text-muted text-sm">{profileData?.hostel || user?.user_metadata?.hostel || "Hostel"} • Room {profileData?.room_no || user?.user_metadata?.room_no || "---"}</p>
           
           <div className="flex gap-4 mt-6 w-full">
             {stats.map((stat, i) => (
@@ -150,7 +147,6 @@ export default function Profile({ onBack }: { onBack: () => void }) {
                       alt={hero.full_name} 
                       fill
                       className="object-cover"
-                      referrerPolicy="no-referrer"
                     />
                   </div>
                   <div>

@@ -1,10 +1,15 @@
-import { auth } from '@clerk/nextjs/server'
-import { supabaseAdmin } from '@/lib/supabase/server'
+import { createServerSupabaseClient, supabaseAdmin } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
+
+async function getUserId() {
+  const supabase = await createServerSupabaseClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  return user?.id
+}
 
 export async function GET(_: Request, { params }: { params: Promise<{ tripId: string }> }) {
   const { tripId } = await params
-  const { userId } = await auth()
+  const userId = await getUserId()
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { data, error } = await supabaseAdmin
@@ -19,7 +24,7 @@ export async function GET(_: Request, { params }: { params: Promise<{ tripId: st
 
 export async function POST(req: Request, { params }: { params: Promise<{ tripId: string }> }) {
   const { tripId } = await params
-  const { userId } = await auth()
+  const userId = await getUserId()
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { text } = await req.json()

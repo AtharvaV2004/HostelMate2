@@ -1,4 +1,3 @@
-import { ClerkProvider } from '@clerk/nextjs'
 import type {Metadata} from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css'; // Global styles
@@ -12,14 +11,12 @@ export const metadata: Metadata = {
 
 export default function RootLayout({children}: {children: React.ReactNode}) {
   return (
-    <ClerkProvider>
-      <html lang="en" className="dark">
-        <body className={`${inter.className} bg-[#0F1412] text-[#F9FAFB] antialiased`} suppressHydrationWarning>
-          <div className="min-h-screen bg-black flex justify-center items-center">
-            {children}
-          </div>
-        </body>
-      </html>
-    </ClerkProvider>
+    <html lang="en" className="dark">
+      <body className={`${inter.className} bg-[#0F1412] text-[#F9FAFB] antialiased`} suppressHydrationWarning>
+        <div className="min-h-screen bg-black flex justify-center items-center">
+          {children}
+        </div>
+      </body>
+    </html>
   );
 }
