@@ -44,8 +44,21 @@ export default function LoginRegister({ onLoginSuccess }: { onLoginSuccess: () =
         });
         if (error) throw error;
         
-        // In a real app, you might need email verification, but here we assume it's auto-confirmed or user is logged in
+        // Sync to our users table
         if (data.user) {
+          const { error: syncError } = await supabase.from('users').insert({
+            id: data.user.id,
+            email: email,
+            full_name: fullName,
+            room_no: roomNo,
+            hostel: hostel,
+            avatar_url: `https://picsum.photos/seed/${data.user.id}/100/100`
+          });
+          
+          if (syncError) {
+            console.error('Sync error:', syncError);
+          }
+          
           onLoginSuccess();
         }
       }
