@@ -8,7 +8,8 @@ export default function CreateTrip({ onBack, onLive }: { onBack: () => void, onL
     location: '',
     departure_time: '',
     slots_total: '5',
-    notes: ''
+    notes: '',
+    type: 'Quick'
   });
   const [loading, setLoading] = useState(false);
 
@@ -96,6 +97,26 @@ export default function CreateTrip({ onBack, onLive }: { onBack: () => void, onL
                 value={formData.location}
                 onChange={(e) => setFormData({...formData, location: e.target.value})}
               />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-xs font-bold text-text-muted uppercase tracking-widest px-1">Trip Category</label>
+            <div className="grid grid-cols-2 gap-3">
+              {['Food', 'Grocery', 'Quick', 'Medical'].map((t) => (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => setFormData({ ...formData, type: t })}
+                  className={`flex items-center justify-center py-3 px-4 rounded-xl border transition-all text-sm ${
+                    formData.type === t 
+                      ? 'emerald-gradient border-transparent text-white font-bold' 
+                      : 'bg-bg-surface border-glass-border text-text-muted hover:border-primary/50'
+                  }`}
+                >
+                  {t}
+                </button>
+              ))}
             </div>
           </div>
 
