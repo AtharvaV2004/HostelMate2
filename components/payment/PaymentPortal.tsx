@@ -16,7 +16,7 @@ export default function PaymentPortal({ onBack, hostName, upiId }: {
   };
 
   return (
-    <div className="mobile-container flex flex-col">
+    <div className="w-full h-full flex flex-col">
       {/* Header */}
       <motion.div 
         initial={{ y: -20, opacity: 0 }}

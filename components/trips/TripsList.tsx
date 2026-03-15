@@ -42,7 +42,7 @@ export default function TripsList({ onTripClick }: { onTripClick: (trip: any) =>
   };
 
   return (
-    <div className="mobile-container pb-24 overflow-y-auto hide-scrollbar">
+    <div className="w-full h-full overflow-y-auto hide-scrollbar pb-24">
       {/* Header */}
       <motion.div 
         initial={{ y: -20, opacity: 0 }}

@@ -41,7 +41,7 @@ export default function CreateTrip({ onBack, onLive }: { onBack: () => void, onL
   };
 
   return (
-    <div className="mobile-container bg-black overflow-y-auto hide-scrollbar pb-10">
+    <div className="w-full h-full bg-black overflow-y-auto hide-scrollbar pb-10">
       {/* Header */}
       <motion.div 
         initial={{ y: -20, opacity: 0 }}

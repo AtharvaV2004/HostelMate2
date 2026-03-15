@@ -72,7 +72,7 @@ export default function Chat({ tripId, onBack, initialMessage }: { tripId: strin
   };
 
   return (
-    <div className="mobile-container flex flex-col bg-black">
+    <div className="w-full h-full flex flex-col bg-black">
       {/* Header */}
       <motion.div 
         initial={{ y: -20, opacity: 0 }}

@@ -35,7 +35,7 @@ export default function Profile({ onBack }: { onBack: () => void }) {
   ];
 
   return (
-    <div className="mobile-container bg-black overflow-y-auto hide-scrollbar pb-24">
+    <div className="w-full h-full bg-black overflow-y-auto hide-scrollbar pb-24">
       {/* Header */}
       <div className="relative h-48 w-full">
         <div className="absolute inset-0 emerald-gradient opacity-20" />

@@ -64,7 +64,7 @@ export default function RequestItem({ onBack, onSubmit, tripInfo }: {
   }, 0);
 
   return (
-    <div className="mobile-container flex flex-col">
+    <div className="w-full h-full flex flex-col">
       {/* Header */}
       <motion.div 
         initial={{ y: -20, opacity: 0 }}
