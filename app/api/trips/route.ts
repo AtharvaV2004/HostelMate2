@@ -34,7 +34,7 @@ export async function POST(req: Request) {
     departure_time,
     slots_total,
     notes,
-    type,
+    type: type || 'Quick',
   }).select().single()
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
