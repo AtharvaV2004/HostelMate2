@@ -20,15 +20,18 @@ export default function CreateTrip({ onBack, onLive }: { onBack: () => void, onL
     setLoading(true);
     
     try {
+      const today = new Date().toISOString().split('T')[0];
+      const toISO = (timeStr: string) => timeStr ? new Date(`${today}T${timeStr}`).toISOString() : null;
+
       const response = await fetch('/api/trips', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
           slots_total: parseInt(formData.slots_total),
-          departure_time: new Date(formData.departure_time).toISOString(),
-          returning_time: formData.returning_time ? new Date(formData.returning_time).toISOString() : null,
-          request_deadline: formData.request_deadline ? new Date(formData.request_deadline).toISOString() : null
+          departure_time: toISO(formData.departure_time),
+          returning_time: toISO(formData.returning_time),
+          request_deadline: toISO(formData.request_deadline)
         }),
       });
 
@@ -130,9 +133,9 @@ export default function CreateTrip({ onBack, onLive }: { onBack: () => void, onL
               <div className="glass-card flex items-center px-4 py-4 gap-3 focus-within:border-primary transition-colors">
                 <Clock size={16} className="text-primary/50" />
                 <input 
-                  type="datetime-local" 
+                  type="time" 
                   required
-                  className="bg-transparent border-none outline-none w-full text-white text-xs [color-scheme:dark]"
+                  className="bg-transparent border-none outline-none w-full text-white text-sm [color-scheme:dark]"
                   value={formData.departure_time}
                   onChange={(e) => setFormData({...formData, departure_time: e.target.value})}
                 />
@@ -143,9 +146,9 @@ export default function CreateTrip({ onBack, onLive }: { onBack: () => void, onL
               <div className="glass-card flex items-center px-4 py-4 gap-3 focus-within:border-primary transition-colors">
                 <Clock size={16} className="text-emerald-400/50" />
                 <input 
-                  type="datetime-local" 
+                  type="time" 
                   required
-                  className="bg-transparent border-none outline-none w-full text-white text-xs [color-scheme:dark]"
+                  className="bg-transparent border-none outline-none w-full text-white text-sm [color-scheme:dark]"
                   value={formData.returning_time}
                   onChange={(e) => setFormData({...formData, returning_time: e.target.value})}
                 />
@@ -158,9 +161,9 @@ export default function CreateTrip({ onBack, onLive }: { onBack: () => void, onL
             <div className="glass-card flex items-center px-4 py-4 gap-3 focus-within:border-primary transition-colors">
               <Clock size={16} className="text-amber-400/50" />
               <input 
-                type="datetime-local" 
+                type="time" 
                 required
-                className="bg-transparent border-none outline-none w-full text-white text-xs [color-scheme:dark]"
+                className="bg-transparent border-none outline-none w-full text-white text-sm [color-scheme:dark]"
                 value={formData.request_deadline}
                 onChange={(e) => setFormData({...formData, request_deadline: e.target.value})}
               />
