@@ -68,7 +68,7 @@ export default function App() {
             duration: 0.4, 
             ease: [0.22, 1, 0.36, 1] 
           }}
-          className="w-full h-full"
+          className="w-full h-full flex flex-col"
         >
           {(() => {
             switch (currentPage) {
@@ -129,8 +129,10 @@ export default function App() {
           </div>
         </div>
 
-        <div className="flex-1 relative">
-          {renderPage()}
+        <div className="flex-1 relative overflow-hidden">
+          <div className="absolute inset-0 flex flex-col">
+            {renderPage()}
+          </div>
         </div>
         
         {currentPage === 'main' && (

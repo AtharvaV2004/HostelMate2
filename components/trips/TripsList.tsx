@@ -42,7 +42,7 @@ export default function TripsList({ onTripClick }: { onTripClick: (trip: any) =>
   };
 
   return (
-    <div className="w-full h-full overflow-y-auto hide-scrollbar pb-24">
+    <div className="w-full flex-1 min-h-0 overflow-y-auto hide-scrollbar pb-24">
       {/* Header */}
       <motion.div 
         initial={{ y: -20, opacity: 0 }}

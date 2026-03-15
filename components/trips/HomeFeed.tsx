@@ -34,7 +34,7 @@ export default function HomeFeed({ onTripClick, onCreateTrip }: { onTripClick: (
   };
 
   return (
-    <div className="w-full h-full overflow-y-auto hide-scrollbar pb-24">
+    <div className="w-full flex-1 min-h-0 overflow-y-auto hide-scrollbar pb-24">
       {/* Sticky Header */}
       <motion.div 
         initial={{ y: -50 }}
